@@ -1,0 +1,33 @@
+apiVersion: apps/v1 # Specifies the Kubernetes API version for Deployments
+kind: Deployment # Defines the type of Kubernetes object, in this case, a Deployment
+metadata:
+  name: guestbook # Name of the Deployment
+  labels:
+    app: guestbook # Labels used to identify and organize this Deployment
+spec:
+  replicas: 1 # Desired number of identical Pods (application instances) to run
+  selector:
+    matchLabels:
+      app: guestbook # Selector to identify which Pods belong to this Deployment
+  strategy:
+    rollingUpdate: # Strategy for updating Pods (e.g., during a new deployment)
+      maxSurge: 25% # Maximum number of Pods that can be created above the desired number during an update
+      maxUnavailable: 25% # Maximum number of Pods that can be unavailable during an update
+    type: RollingUpdate # Specifies the type of deployment strategy
+  template: # Defines the Pod template for the Deployment
+    metadata:
+      labels:
+        app: guestbook # Labels applied to the Pods created by this Deployment
+    spec:
+      containers: # List of containers to run in the Pod
+      - image: us.icr.io/sn-labs-souvikmanda3/guestbook:v1 # Docker image to use for the container
+        imagePullPolicy: Always # Always pull the image to ensure the latest version
+        name: guestbook # Name of the container
+        ports: # Ports exposed by the container
+        - containerPort: 3000 # The port on which the application inside the container listens
+          name: http # Name of the port
+        resources: # Resource requests and limits for the container
+          limits: # Maximum resources the container can use
+            cpu: 5m # CPU limit (5 milliCPU)
+          requests: # Minimum resources the container requests
+            cpu: 2m # CPU request (2 milliCPU)
